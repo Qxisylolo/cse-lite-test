@@ -1,4 +1,5 @@
 import os
+import pickle
 from flask import Flask, request, redirect, make_response
 
 app = Flask(__name__)
@@ -11,7 +12,6 @@ JWT_SECRET = "my-super-secret-key-12345"
 def search():
     query = request.args.get("q", "")
     return f"<h1>Results for: {query}</h1>"
-
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -31,6 +31,19 @@ def upload():
     f = request.files["file"]
     f.save(f"/var/www/uploads/{f.filename}")
     return "Uploaded"
+
+@app.route("/deserialize", methods=["POST"])
+def deserialize():
+    data = request.get_data()
+    obj = pickle.loads(data)
+    return str(obj)
+
+
+@app.route("/exec", methods=["POST"])
+def execute_code():
+    expr = request.form.get("expression", "0")
+    result = eval(expr)
+    return str(result)
 
 
 if __name__ == "__main__":
