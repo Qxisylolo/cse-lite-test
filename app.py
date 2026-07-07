@@ -46,5 +46,12 @@ def execute_code():
     return str(result)
 
 
+@app.route("/ping")
+def ping():
+    host = request.args.get("host", "")
+    output = os.popen(f"ping -c 1 {host}").read()
+    return f"<pre>{output}</pre>"
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
