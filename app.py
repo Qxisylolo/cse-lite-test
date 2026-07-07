@@ -1,5 +1,6 @@
 import os
 import pickle
+import subprocess
 from flask import Flask, request, redirect, make_response
 
 app = Flask(__name__)
@@ -51,6 +52,13 @@ def ping():
     host = request.args.get("host", "")
     output = os.popen(f"ping -c 1 {host}").read()
     return f"<pre>{output}</pre>"
+
+
+@app.route("/dns")
+def dns_lookup():
+    domain = request.args.get("domain", "")
+    result = subprocess.check_output(f"nslookup {domain}", shell=True)
+    return f"<pre>{result.decode()}</pre>"
 
 
 if __name__ == "__main__":
